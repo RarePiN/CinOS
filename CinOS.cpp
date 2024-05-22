@@ -172,7 +172,7 @@ class CinOS{
                         
                 }
 
-                bool signUp() {          // Register user account
+                bool signUp() {
                         char key;
                         vector<char> name;
                         vector<char> pass;
@@ -187,19 +187,52 @@ class CinOS{
                         cout << "Password: " << endl << endl;
                         cout << "Confirm Password: " << endl << endl;
                         line0();
+
+                        vector<char>* currentVector = &name;
+                        int* currentCount = &nameCount;
+
+                        string username;
+                        string password;
+                        string confirmPassword;
+
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
-                                        nameCount++;
-                                        name.push_back(key);
+                                if (key != 8 && key != 13 && key != 27) {
+                                        (*currentCount)++;
+                                        currentVector->push_back(key);
                                 } else {
                                         if (key == 8) {
-                                                if (nameCount > 0) {
-                                                        nameCount--;
-                                                        name.pop_back();
+                                                if (*currentCount > 0) {
+                                                        (*currentCount)--;
+                                                        currentVector->pop_back();
                                                 }
                                         }
                                         if (key == 13) {
-                                                break;
+                                                if (currentVector == &name) {
+                                                        currentVector = &pass;
+                                                        currentCount = &passCount;
+
+                                                        clearScreen();
+                                                        line1();
+                                                        username = string(name.begin(), name.end());
+                                                        cout << endl << "Username: " << username << endl << endl;
+                                                        cout << "Password: _" << endl << endl;
+                                                        cout << "Confirm Password: " << endl << endl;
+                                                        line0();
+                                                } else if (currentVector == &pass) {
+                                                        currentVector = &conPass;
+                                                        currentCount = &conPassCount;
+
+                                                        clearScreen();
+                                                        line1();
+                                                        username = string(name.begin(), name.end());
+                                                        password = string(pass.begin(), pass.end());
+                                                        cout << endl << "Username: " << username << endl << endl;
+                                                        cout << "Password: " << string(passCount, '*') << endl << endl;
+                                                        cout << "Confirm Password: _" << endl << endl;
+                                                        line0();
+                                                } else {
+                                                        break;
+                                                }
                                         }
                                         if (key == 27) {
                                                 return false;
@@ -208,106 +241,29 @@ class CinOS{
 
                                 clearScreen();
                                 line1();
-                                string str(name.begin(), name.end());
-                                cout << endl << "Username: " << str << "_" << endl << endl;
-                                cout << "Password: " << endl << endl;
-                                cout << "Confirm Password: " << endl << endl;
-                                line0();
-                        }
+                                username = string(name.begin(), name.end());
 
-                        clearScreen();
-                        line1();
-                        string str(name.begin(), name.end());
-                        cout << endl << "Username: " << str << endl << endl;
-                        cout << "Password: _" << endl << endl;
-                        cout << "Confirm Password: " << endl << endl;
-                        line0();
-
-                        while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
-                                        passCount++;
-                                        pass.push_back(key);
+                                if (currentVector == &name) {
+                                        cout << endl << "Username: " << username << "_";
+                                } else if (currentVector == &pass) {
+                                        cout << endl << "Username: " << username << endl << endl;
+                                        cout << "Password: " << string(passCount, '*') << "_";
                                 } else {
-                                        if (key == 8) {
-                                                if (passCount >0) {
-                                                        passCount--;
-                                                        pass.pop_back();
-                                                }
-                                        }
-                                        if (key == 13) {
-                                                break;
-                                        }
-                                        if (key == 27) {
-                                                return false;
-                                        }
+                                        cout << endl << "Username: " << username << endl << endl;
+                                        cout << "Password: " << string(passCount, '*') << endl << endl;
+                                        cout << "Confirm Password: " << string(conPassCount, '*') << "_";
                                 }
 
-                                clearScreen();
-                                line1();
-                                string str(name.begin(), name.end());
-                                cout << endl << "Username: " << str << endl << endl;
-                                cout << "Password: ";
-                                string temp = "";
-                                for (int i = 0; i < passCount; i++) {
-                                        temp += "*";
-                                }
-                                temp += "_";
-                                cout << temp << endl << endl;
-                                cout << "Confirm Password: " << endl << endl;
+                                cout << endl << endl;
                                 line0();
                         }
 
-                        clearScreen();
-                        line1();
-                        string str2;
-                        for (int i = 0; i < passCount; i++) {
-                                str2 += "*";
-                        }
-                        cout << endl << "Username: " << str << endl << endl;
-                        cout << "Password: " << str2 << endl << endl;
-                        cout << "Confirm Password: _" << endl << endl;
-                        line0();
+                        username = string(name.begin(), name.end());
+                        password = string(pass.begin(), pass.end());
+                        confirmPassword = string(conPass.begin(), conPass.end());
 
-                        while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
-                                        conPassCount++;
-                                        conPass.push_back(key);
-                                } else {
-                                        if (key == 8) {
-                                                if (conPassCount >0) {
-                                                        conPassCount--;
-                                                        conPass.pop_back();
-                                                }
-                                        }
-                                        if (key == 13) {
-                                                break;
-                                        }
-                                        if (key == 27) {
-                                                return false;
-                                        }
-                                }
-
-                                clearScreen();
-                                line1();
-                                string str(name.begin(), name.end());
-                                cout << endl << "Username: " << str << endl << endl;
-                                cout << "Password: " << str2 << endl << endl;
-                                cout << "Confirm Password: ";
-                                string temp = "";
-                                for (int i = 0; i < conPassCount; i++) {
-                                        temp += "*";
-                                }
-                                temp += "_";
-                                cout << temp << endl << endl;
-                                line0();
-                        }
-
-                        string n(name.begin(), name.end());
-                        string p(pass.begin(), pass.end());
-                        string cp(conPass.begin(), conPass.end());
-
-                        if ((p == cp) and checkUser(n, p) == -1) {
-                                createAccount(n, p, 0);
+                        if (password == confirmPassword && checkUser(username, password) == -1) {
+                                createAccount(username, password, 0);
                                 return true;
                         }
 
