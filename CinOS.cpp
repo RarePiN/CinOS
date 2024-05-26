@@ -16,6 +16,15 @@ class CinOS{
 
         private:
 
+                int errorStatus;
+                // 0:   Nil
+                // Login:
+                //      1:   Password / Account invalid
+                // Create Account:
+                //      2:   Account already exists
+                //      3:   Passwords not match
+
+                
                 bool LoginSuccess = false;
                 account CurrentUser;
 
@@ -53,8 +62,8 @@ class CinOS{
                                                 CurrentUser.username = user;
                                                 CurrentUser.password = password;
                                                 CurrentUser.admin = false;
-                                                return 0;
-                                        }
+                                                return 1;
+                                        } else return -1;
                                 }
                                 count++;
                         }
@@ -67,14 +76,26 @@ class CinOS{
                                                 CurrentUser.username = user;
                                                 CurrentUser.password = password;
                                                 CurrentUser.admin = true;
-                                                return 1;
-                                        }
+                                                return 2;
+                                        } else return -2;
                                 }
                                 count++;
                         }
 
-                        return -1;
+                        return 0;
                         
+                }
+
+                bool validCheck(char c) {       // Check if input is valid
+                        if (c >= 48 and c <= 57) return true;
+                        if (c >= 65 and c <= 90) return true;
+                        if (c >= 97 and c <= 122) return true;
+                        if (c >= 33 and c <= 47) return true;
+                        if (c >= 58 and c <= 64) return true;
+                        if (c >= 91 and c <= 96) return true;
+                        if (c >= 123 and c <= 126) return true;
+
+                        return false;
                 }
 
                 bool logIn() {          // Login user account
@@ -90,7 +111,7 @@ class CinOS{
                         cout << "Password: " << endl << endl;
                         line0();
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
+                                if (key != 8 and key != 13 and key != 27 and validCheck(key)) {
                                         nameCount++;
                                         name.push_back(key);
                                 } else {
@@ -124,7 +145,7 @@ class CinOS{
                         line0();
 
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
+                                if (key != 8 and key != 13 and key != 27 and validCheck(key)) {
                                         passCount++;
                                         pass.push_back(key);
                                 } else {
@@ -159,11 +180,12 @@ class CinOS{
                         string n(name.begin(), name.end());
                         string p(pass.begin(), pass.end());
 
-                        if (checkUser(n, p) == 0 or checkUser(n, p) == 1) {
+                        if (checkUser(n, p) == 1 or checkUser(n, p) == 2) {
                                 LoginSuccess = true;
+                                errorStatus = 0;
                                 return true;
                         }
-
+                        errorStatus = 1;
                         return false;
                         
                 }
@@ -260,7 +282,7 @@ class CinOS{
                         cout << "Confirm Password: " << endl << endl;
                         line0();
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
+                                if (key != 8 and key != 13 and key != 27 and validCheck(key)) {
                                         nameCount++;
                                         name.push_back(key);
                                 } else {
@@ -296,7 +318,7 @@ class CinOS{
                         line0();
 
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
+                                if (key != 8 and key != 13 and key != 27 and validCheck(key)) {
                                         passCount++;
                                         pass.push_back(key);
                                 } else {
@@ -341,7 +363,7 @@ class CinOS{
                         line0();
 
                         while ((key = keyPress())) {
-                                if (key != 8 and key != 13 and key != 27) {
+                                if (key != 8 and key != 13 and key != 27 and validCheck(key)) {
                                         conPassCount++;
                                         conPass.push_back(key);
                                 } else {
@@ -377,10 +399,17 @@ class CinOS{
                         string p(pass.begin(), pass.end());
                         string c(conPass.begin(), conPass.end());
 
-                        if (checkUser(n, p) == -1 and (p == c)) {
+                        if (checkUser(n, p) == 0 and (p == c) and nameCount != 0 and passCount != 0) {
                                 createAccount(n, p, 0);
+                                errorStatus = 0;
                                 return;
                         }
+
+                        // ERROR
+                        
+                        if (checkUser(n, p) != 0) errorStatus = 2;
+                        else if (n != p) errorStatus = 3;
+                        else if (nameCount == 0 or passCount == 0) errorStatus = 1;
 
                         return;
                 }
@@ -392,14 +421,30 @@ class CinOS{
                         string l;       // Output string
 
                         clearScreen();
+
+                        // ERROR MESSAGE
+                        if (errorStatus != 0) {
+                                line0();
+
+                                cout << endl  << "      ERROR: ";
+
+                                // Login
+                                if (errorStatus == 1) cout << "Invalid username or password.";
+                                // Sign up
+                                if (errorStatus == 2) cout << "Account already exists.";
+                                if (errorStatus == 3) cout << "Passwords do not match.";
+
+                                cout << endl << endl;                                
+                        }
+
                         line1();
-                        cout << endl << " " << question << endl << endl;
+                        cout << endl << "    " << question << endl << endl;
 
                         for (int i = 0; i < count; i++) {
                                 l = "";
 
-                                if (choice == i) l += " > ";
-                                else l += "   ";
+                                if (choice == i) l += "    > ";
+                                else l += "      ";
                                                 
                                 l += options[i];
 
@@ -431,13 +476,13 @@ class CinOS{
 
                                         clearScreen();
                                         line1();
-                                        cout << endl << " " << question << endl << endl;
+                                        cout << endl << "    " << question << endl << endl;
 
                                         for (int i = 0; i < count; i++) {
                                                 l = "";
 
-                                                if (choice == i) l += " > ";
-                                                else l += "   ";
+                                                if (choice == i) l += "    > ";
+                                                else l += "      ";
                                                                 
                                                 l += options[i];
 
@@ -462,6 +507,9 @@ class CinOS{
 
                 void UserInterface() {
 
+                        errorStatus = 0;
+                        
+                        //      LOGIN PAGE
                         while(not(LoginSuccess)) {
 
                                 int action;
@@ -475,11 +523,13 @@ class CinOS{
 
                         }
 
+                        //      MAIN MENU (USER)
+                        while(true) {
+                                int action;
+                                action = choose(4, "Main Menu:", {"User Center","Movie Info","Purchase Ticket","Exit"});
 
-                        cout << endl << CurrentUser.id << endl;
-                        cout << CurrentUser.username << endl;
-                        cout << CurrentUser.password << endl;
-                        cout << CurrentUser.admin << endl;
+                                if (action == -1 or action == 3) return;
+                        }
                         return;
 
                 }
