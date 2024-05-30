@@ -12,6 +12,14 @@ struct account{
         bool admin;
 };
 
+struct movie{
+        int id;
+        string name;
+        string desc;
+        int length;
+        vector<vector<int>> seat;
+};
+
 class CinOS{
 
         private:
@@ -526,9 +534,15 @@ class CinOS{
                         //      MAIN MENU (USER)
                         while(true) {
                                 int action;
-                                action = choose(4, "Main Menu:", {"User Center","Movie Info","Purchase Ticket","Exit"});
+                                action = choose(3, "Main Menu:", {"User Center","Movie Info","Exit"});
 
-                                if (action == -1 or action == 3) return;
+                                if (action == -1 or action == 2) return;
+
+                                if (action == 0) {
+                                        action = choose(3, "User Center:", {"Change Passowrd","Revoke Account","Exit"});
+                                } else if (action == 1) {
+                                        
+                                }
                         }
                         return;
 
