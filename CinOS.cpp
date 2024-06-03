@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <string>
 #include <vector>
+#include <ctime>
 using namespace std;
 
 struct account{
@@ -511,6 +512,47 @@ class CinOS{
 
                 }
 
+                void changePassword() {
+                        
+                        return;
+                }
+
+                void deleteAccount() {
+
+                        return;
+                }
+
+                void log(string msg) {ifstream file("Data/user.txt");
+
+                        string line;
+                        vector<string> lines;
+
+                        ifstream file("log.txt");
+                                      
+                        while(getline(file, line)) {
+                                lines.push_back(line);
+                        }
+
+                        file.close();
+
+                        ofstream logFile("log.txt");
+
+                        for (int i = 0; i < lines.size(); i++) {
+                                data << lines[i] << endl;
+                        }
+
+                        time_t currentTime = time(nullptr);
+                        tm* localTime = localtime(&currentTime);
+
+                        char timeBuffer[9];
+                        strftime(timeBuffer, sizeof(timeBuffer), "%H:%M:%S", localTime);
+
+                        logFile << "[" << timeBuffer << "] " << msg << endl;
+                        logFile.close();
+                        
+                        return;
+                }
+
         public:
 
                 void UserInterface() {
@@ -538,14 +580,15 @@ class CinOS{
 
                                 if (action == -1 or action == 2) return;
 
-                                if (action == 0) {
+                                if (action == 0) {        // User options
                                         action = choose(3, "User Center:", {"Change Passowrd","Revoke Account","Exit"});
-                                } else if (action == 1) {
                                         
-                                }
+                                } else if (action == 1) {        // Movie Info
+                                        continue; // PLACE HOLDER uwu
+                                        
+                                } else return;
                         }
                         return;
-
                 }
 
 };
